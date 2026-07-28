@@ -1,0 +1,105 @@
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from backend.database.database import get_db
+from backend.database.models import Holding, Portfolio
+from backend.schemas.holding import HoldingCreate, HoldingResponse
+
+router = APIRouter(
+    prefix="/holdings",
+    tags=["Holdings"]
+)
+
+
+# -------------------------
+# Create Holding
+# -------------------------
+@router.post("/", response_model=HoldingResponse)
+def create_holding(
+    holding: HoldingCreate,
+    db: Session = Depends(get_db)
+):
+
+    portfolio = db.query(Portfolio).filter(
+        Portfolio.id == holding.portfolio_id
+    ).first()
+
+    if portfolio is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Portfolio not found"
+        )
+
+    new_holding = Holding(
+        portfolio_id=holding.portfolio_id,
+        symbol=holding.symbol,
+        company_name=holding.company_name,
+        quantity=holding.quantity,
+        buy_price=holding.buy_price,
+        current_price=holding.current_price
+    )
+
+    db.add(new_holding)
+    db.commit()
+    db.refresh(new_holding)
+
+    return new_holding
+
+
+# -------------------------
+# Get All Holdings
+# -------------------------
+@router.get("/", response_model=list[HoldingResponse])
+def get_holdings(
+    db: Session = Depends(get_db)
+):
+    return db.query(Holding).all()
+
+
+# -------------------------
+# Get Holding By ID
+# -------------------------
+@router.get("/{holding_id}", response_model=HoldingResponse)
+def get_holding(
+    holding_id: int,
+    db: Session = Depends(get_db)
+):
+
+    holding = db.query(Holding).filter(
+        Holding.id == holding_id
+    ).first()
+
+    if holding is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Holding not found"
+        )
+
+    return holding
+
+
+# -------------------------
+# Delete Holding
+# -------------------------
+@router.delete("/{holding_id}")
+def delete_holding(
+    holding_id: int,
+    db: Session = Depends(get_db)
+):
+
+    holding = db.query(Holding).filter(
+        Holding.id == holding_id
+    ).first()
+
+    if holding is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Holding not found"
+        )
+
+    db.delete(holding)
+    db.commit()
+
+    return {
+        "message": "Holding deleted successfully"
+    }

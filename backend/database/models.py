@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from backend.database.database import Base
 
 
@@ -23,3 +23,28 @@ class Portfolio(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     balance = Column(Float, default=0.0)
+
+
+# -------------------------
+# Holding Model
+# -------------------------
+class Holding(Base):
+    __tablename__ = "holdings"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    portfolio_id = Column(
+        Integer,
+        ForeignKey("portfolios.id"),
+        nullable=False
+    )
+
+    symbol = Column(String, nullable=False)
+
+    company_name = Column(String, nullable=False)
+
+    quantity = Column(Float, nullable=False)
+
+    buy_price = Column(Float, nullable=False)
+
+    current_price = Column(Float, nullable=False)

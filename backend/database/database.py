@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # -----------------------------------
-# PostgreSQL Database URL
+# PostgreSQL Connection
 # -----------------------------------
 DATABASE_URL = "postgresql://postgres:FinSight%40123@localhost:5432/finsight_db"
 
@@ -26,9 +26,13 @@ SessionLocal = sessionmaker(
 Base = declarative_base()
 
 # -----------------------------------
-# Import Models BEFORE create_all()
+# Import Models
 # -----------------------------------
-from backend.database.models import User, Portfolio
+from backend.database.models import (
+    User,
+    Portfolio,
+    Holding
+)
 
 # -----------------------------------
 # Create Tables
@@ -36,7 +40,7 @@ from backend.database.models import User, Portfolio
 Base.metadata.create_all(bind=engine)
 
 # -----------------------------------
-# Dependency
+# Database Dependency
 # -----------------------------------
 def get_db():
     db = SessionLocal()
