@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 
+# Import Routers
 from backend.api.users import router as users_router
 from backend.api.portfolio import router as portfolio_router
 from backend.api.holding import router as holding_router
 from backend.api.market import router as market_router
+from backend.api.advisor import router as advisor_router
 
 app = FastAPI(
     title="FinSight AI API",
@@ -16,8 +18,10 @@ app.include_router(users_router)
 app.include_router(portfolio_router)
 app.include_router(holding_router)
 app.include_router(market_router)
+app.include_router(advisor_router)
 
 
+# Home Route
 @app.get("/")
 def home():
     return {
@@ -25,6 +29,7 @@ def home():
     }
 
 
+# Health Check
 @app.get("/health")
 def health():
     return {
