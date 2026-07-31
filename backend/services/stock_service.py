@@ -15,3 +15,12 @@ def get_stock_price(symbol: str):
         "sector": info.get("sector"),
         "industry": info.get("industry")
     }
+
+
+def get_live_price(symbol: str):
+
+    ticker = yf.Ticker(symbol)
+
+    info = ticker.info
+
+    return info.get("currentPrice")
