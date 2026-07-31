@@ -1,50 +1,36 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-# -----------------------------------
-# PostgreSQL Connection
-# -----------------------------------
-DATABASE_URL = "postgresql://postgres:FinSight%40123@localhost:5432/finsight_db"
+from backend.config.settings import DATABASE_URL
 
-# -----------------------------------
-# SQLAlchemy Engine
-# -----------------------------------
-engine = create_engine(DATABASE_URL)
+# PostgreSQL Engine
+engine = create_engine(
+    DATABASE_URL
+)
 
-# -----------------------------------
-# Session Factory
-# -----------------------------------
+# Session
 SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
     bind=engine
 )
 
-# -----------------------------------
 # Base Class
-# -----------------------------------
 Base = declarative_base()
 
-# -----------------------------------
-# Import Models
-# -----------------------------------
-from backend.database.models import (
-    User,
-    Portfolio,
-    Holding
-)
 
-# -----------------------------------
-# Create Tables
-# -----------------------------------
-Base.metadata.create_all(bind=engine)
-
-# -----------------------------------
-# Database Dependency
-# -----------------------------------
+# Dependency
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+
+# Import models AFTER Base is created
+from backend.database.models import User, Portfolio, Holding
+
+# Create all tables
+Base.metadata.create_all(bind=engine)
