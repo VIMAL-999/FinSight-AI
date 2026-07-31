@@ -7,6 +7,7 @@ from backend.api.holding import router as holding_router
 from backend.api.market import router as market_router
 from backend.api.advisor import router as advisor_router
 from backend.api.dashboard import router as dashboard_router
+from backend.api.recommendation import router as recommendation_router
 
 app = FastAPI(
     title="FinSight AI API",
@@ -21,6 +22,7 @@ app.include_router(holding_router)
 app.include_router(market_router)
 app.include_router(advisor_router)
 app.include_router(dashboard_router)
+app.include_router(recommendation_router)
 
 
 # -------------------------
